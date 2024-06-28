@@ -5,6 +5,7 @@ import React from 'react'
 
 const Footer = ({ user, type = 'desktop' }: FooterProps) => {
   const router = useRouter()
+
   const handleLogOut = async () => {
     const loggedOut = await logoutAccount()
     if (loggedOut) router.push('/sign-in')
