@@ -34,8 +34,13 @@ const formSchema = (type: string) =>
     state:
       type === 'sign-in' ? z.string().optional() : z.string().max(2).min(2),
     postalCode:
-      type === 'sign-in' ? z.string().optional() : z.string().min(3).max(6),
-    dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+      type === 'sign-in'
+        ? z.string().optional()
+        : z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid postal code format'),
+    dateOfBirth:
+      type === 'sign-in'
+        ? z.string().optional()
+        : z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
     ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
     city: type === 'sign-in' ? z.string().optional() : z.string().min(3),
   })
@@ -115,134 +120,134 @@ const AuthForm = ({ type }: { type: string }) => {
           </h1>
         </div>
       </header>
-      {/* {user ? ( */}
-      <div className='flex flex-col gap-4'>
-        <PlaidLink user={user} variant='primary' />
-      </div>
-      {/* ) : ( */}
-      <>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            {type === 'sign-up' && (
-              <>
-                <div className='flex gap-4'>
+      {user ? (
+        <div className='flex flex-col gap-4'>
+          <PlaidLink user={user} variant='primary' />
+        </div>
+      ) : (
+        <>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+              {type === 'sign-up' && (
+                <>
+                  <div className='flex gap-4'>
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='firstName'
+                      label='First Name'
+                      placeholder='ex: John'
+                    />
+
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='lastName'
+                      label='Last Name'
+                      placeholder='ex: Doe'
+                    />
+                  </div>
+
                   <FormFieldComp
                     formSchema={authFormSchema}
                     form={form}
-                    name='firstName'
-                    label='First Name'
-                    placeholder='ex: John'
+                    name='address1'
+                    label='Address'
+                    placeholder='Enter your specific address'
                   />
 
                   <FormFieldComp
                     formSchema={authFormSchema}
                     form={form}
-                    name='lastName'
-                    label='Last Name'
-                    placeholder='ex: Doe'
-                  />
-                </div>
-
-                <FormFieldComp
-                  formSchema={authFormSchema}
-                  form={form}
-                  name='address1'
-                  label='Address'
-                  placeholder='Enter your specific address'
-                />
-
-                <FormFieldComp
-                  formSchema={authFormSchema}
-                  form={form}
-                  name='city'
-                  label='City'
-                  placeholder='Enter your city'
-                />
-
-                <div className='flex gap-4'>
-                  <FormFieldComp
-                    formSchema={authFormSchema}
-                    form={form}
-                    name='state'
-                    label='State'
-                    placeholder='ex: NY'
+                    name='city'
+                    label='City'
+                    placeholder='Enter your city'
                   />
 
-                  <FormFieldComp
-                    formSchema={authFormSchema}
-                    form={form}
-                    name='postalCode'
-                    label='Postal Code'
-                    placeholder='ex: 10001'
-                  />
-                </div>
+                  <div className='flex gap-4'>
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='state'
+                      label='State'
+                      placeholder='ex: NY'
+                    />
 
-                <div className='flex gap-4'>
-                  <FormFieldComp
-                    formSchema={authFormSchema}
-                    form={form}
-                    name='dateOfBirth'
-                    label='Date of Birth'
-                    placeholder='YYYY-MM-DD'
-                  />
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='postalCode'
+                      label='Postal Code'
+                      placeholder='ex: 10001'
+                    />
+                  </div>
 
-                  <FormFieldComp
-                    formSchema={authFormSchema}
-                    form={form}
-                    name='ssn'
-                    label='SSN'
-                    placeholder='ex: 1234'
-                  />
-                </div>
-              </>
-            )}
-            <FormFieldComp
-              formSchema={authFormSchema}
-              form={form}
-              name='email'
-              label='Email'
-              placeholder='Enter your email'
-            />
+                  <div className='flex gap-4'>
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='dateOfBirth'
+                      label='Date of Birth'
+                      placeholder='YYYY-MM-DD'
+                    />
 
-            <FormFieldComp
-              formSchema={authFormSchema}
-              form={form}
-              name='password'
-              label='Password'
-              placeholder='Enter your password'
-            />
-            <div className='flex flex-col gap-4'>
-              <Button type='submit' className='form-btn' disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 size={20} className='animate-spin' />
-                    &nbsp; Loading...
-                  </>
-                ) : type === 'sign-in' ? (
-                  'Sign In'
-                ) : (
-                  'Sign Up'
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
+                    <FormFieldComp
+                      formSchema={authFormSchema}
+                      form={form}
+                      name='ssn'
+                      label='SSN'
+                      placeholder='ex: 1234'
+                    />
+                  </div>
+                </>
+              )}
+              <FormFieldComp
+                formSchema={authFormSchema}
+                form={form}
+                name='email'
+                label='Email'
+                placeholder='Enter your email'
+              />
 
-        <footer className='flex justify-center gap-1'>
-          <p className='text-14 font-normal text-gray-600'>
-            {type === 'sign-in'
-              ? "Don't have an account?"
-              : 'Alredy have an account'}
-          </p>
-          <Link
-            href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className='form-link'
-          >
-            {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
-          </Link>
-        </footer>
-      </>
-      {/* )} */}
+              <FormFieldComp
+                formSchema={authFormSchema}
+                form={form}
+                name='password'
+                label='Password'
+                placeholder='Enter your password'
+              />
+              <div className='flex flex-col gap-4'>
+                <Button type='submit' className='form-btn' disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={20} className='animate-spin' />
+                      &nbsp; Loading...
+                    </>
+                  ) : type === 'sign-in' ? (
+                    'Sign In'
+                  ) : (
+                    'Sign Up'
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+
+          <footer className='flex justify-center gap-1'>
+            <p className='text-14 font-normal text-gray-600'>
+              {type === 'sign-in'
+                ? "Don't have an account?"
+                : 'Alredy have an account'}
+            </p>
+            <Link
+              href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
+              className='form-link'
+            >
+              {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+            </Link>
+          </footer>
+        </>
+      )}
     </section>
   )
 }
