@@ -3,16 +3,7 @@
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Form } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
 
 import Image from 'next/image'
@@ -26,23 +17,20 @@ import PlaidLink from './PlaidLink'
 
 const formSchema = (type: string) =>
   z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
+    // sign up
     firstName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
     lastName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
     address1: type === 'sign-in' ? z.string().optional() : z.string().max(50),
+    city: type === 'sign-in' ? z.string().optional() : z.string().max(50),
     state:
-      type === 'sign-in' ? z.string().optional() : z.string().max(2).min(2),
+      type === 'sign-in' ? z.string().optional() : z.string().min(2).max(2),
     postalCode:
-      type === 'sign-in'
-        ? z.string().optional()
-        : z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid postal code format'),
-    dateOfBirth:
-      type === 'sign-in'
-        ? z.string().optional()
-        : z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
+      type === 'sign-in' ? z.string().optional() : z.string().min(3).max(6),
+    dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(3),
     ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
-    city: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+    // both
+    email: z.string().email(),
+    password: z.string().min(8),
   })
 
 const AuthForm = ({ type }: { type: string }) => {
